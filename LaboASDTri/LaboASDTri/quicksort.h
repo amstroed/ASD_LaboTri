@@ -35,7 +35,7 @@ void  quickSort(vector<T>& vect, typename vector<T>::iterator lo, typename vecto
 	{
 		return;
 	}
-	typename vector<T>::iterator p = lo + 1;
+	typename vector<T>::iterator p = lo;
 	swap(*hi, *p);
 	typename vector<T>::iterator i = partitionner(vect, lo, hi);
 	quickSort(vect, lo, i - 1);
