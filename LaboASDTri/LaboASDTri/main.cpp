@@ -7,8 +7,8 @@
 using namespace std;
 
 int main() {
-	vector<string> test{ "alex", "frank", "lisa", "eric", "albert", "gilles", "pierre" };
-	selectionSort(test);
+	vector<string> test{ "pierre", "gilles", "lisa", "frank", "eric", "alex" , "albert" };
+	quickSort(test, test.begin(), test.end() - 1);
 	return EXIT_SUCCESS;
 }
 

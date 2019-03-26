@@ -10,5 +10,6 @@ void selectionSort(std::vector<T>& vect);
 
 #include "selectionSort.h";
 
+#include "quicksort.h";
 
 #endif
