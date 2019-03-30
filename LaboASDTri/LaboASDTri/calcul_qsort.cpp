@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <chrono>
+#include <limits>
 
 using namespace std;
 using namespace std::chrono;
@@ -122,7 +123,7 @@ void quickSort(RandomAccessIterator begin,
 }
 
 
-void calculTri(int tailleVecteur, int nbVecteurs)
+void calculTri(const int tailleVecteur, const int nbVecteurs)
 {
 	double tempsMoyen = 0.;
 	double tempsTotal = 0.;
@@ -133,7 +134,7 @@ void calculTri(int tailleVecteur, int nbVecteurs)
 	{
 		for (int j = 0; j < tailleVecteur; ++j)
 		{
-			v.push_back(rand() % (1001) + 0);
+			v.push_back(rand() % 1001);
 		}
 		t1 = high_resolution_clock::now();
 		quickSort(v.begin(), v.end());
@@ -141,9 +142,31 @@ void calculTri(int tailleVecteur, int nbVecteurs)
 		tempsTotal += duration_cast<nanoseconds>(t2 - t1).count();
 		v.clear();
 	}
-	tempsMoyen = tempsTotal / 100;
+	tempsMoyen = tempsTotal / nbVecteurs;
 	cout << "Temps moyen pour " << nbVecteurs << " vecteurs (int) de " <<
 		tailleVecteur << " valeurs : " << tempsMoyen << endl;
+}
+template < typename T >
+int calculTriGenerique(vector<T>& v, const int tailleVecteur, const int nbVecteurs)
+{
+	double tempsMoyen = 0.;
+	double tempsTotal = 0.;
+	high_resolution_clock::time_point t1;
+	high_resolution_clock::time_point t2;
+	for (int i = 0; i < nbVecteurs; ++i)
+	{
+		for (int j = 0; j < tailleVecteur; ++j)
+		{
+			v.push_back(rand() % numeric_limits<int>::max() + 1);
+		}
+		t1 = high_resolution_clock::now();
+		quickSort(v.begin(), v.end());
+		t2 = high_resolution_clock::now();
+		tempsTotal += duration_cast<nanoseconds>(t2 - t1).count();
+		v.clear();
+	}
+	tempsMoyen = tempsTotal / nbVecteurs;
+	return tempsMoyen;
 }
 
 // main
@@ -157,60 +180,30 @@ void calculTri(int tailleVecteur, int nbVecteurs)
 
 int main(int argc, const char * argv[]) {
 
-	//tri rapide
-	 //Calcul du temps de tri pour des séries de données de taille différente de même distribution
+	//Calcul du temps de tri moyen pour des séries de données de taille différente de même distribution
+	calculTri(100, 1000);
+	calculTri(1000, 1000);
+	calculTri(10000, 1000);
+	cout << endl << endl;
+	//Calcul du temps de tri moyen pour des séries de données de même taille et de distribution différente
 
-	 //string 1 (21 char)
-	string s("EXEMPLE_DE_TRI_RAPIDE");
-	high_resolution_clock::time_point t1 = high_resolution_clock::now();
-	quickSort(s.begin(), s.end());
-	high_resolution_clock::time_point t2 = high_resolution_clock::now();
-	double temps = duration_cast<nanoseconds>(t2 - t1).count();
-	cout << "temps string 1 (21 char) :" << temps << endl << endl;
+	//Vecteurs d'entiers
+	vector<int> v1;
+	int tempsMoyen = calculTriGenerique(v1, 100, 1000);
+	cout << "Temps moyen pour 1000 vecteurs (int) de 100 valeurs : "
+		<< tempsMoyen << endl;
 
-	//string 2 (42 char)
-	s = "CECI_EST_UN_AUTRE_EXEMPLE_DE_TRI_RAPIDE_ID";
-	t1 = high_resolution_clock::now();
-	quickSort(s.begin(), s.end());
-	t2 = high_resolution_clock::now();
-	temps = duration_cast<nanoseconds>(t2 - t1).count();
-	cout << "temps string 2 (42 char, le double du premier) :" << temps << endl << endl;
+	//Vecteurs de doubles
+	vector<short> v2;
+	tempsMoyen = calculTriGenerique(v2, 100, 1000);
+	cout << "Temps moyen pour 1000 vecteurs (double) de 100 valeurs : "
+		<< tempsMoyen << endl;
 
-	//string 3 (63 char)
-	s = "CECI_EST_ENCORE_UN_AUTRE_EXEMPLE_DE_TRI_RAPIDE_MAIS_ENCORE_PLUS";
-	t1 = high_resolution_clock::now();
-	quickSort(s.begin(), s.end());
-	t2 = high_resolution_clock::now();
-	temps = duration_cast<nanoseconds>(t2 - t1).count();
-	cout << "temps string 3 (63 char, le triple du premier) :" << temps << endl << endl;
-
-
-	//Calcul du temps de tri pour des séries de données de même taille et de distribution différente
-	//string de 14 caractères
-	s = "EXEMPLE_DE_TRI";
-	t1 = high_resolution_clock::now();
-	quickSort(s.begin(), s.end());
-	t2 = high_resolution_clock::now();
-	temps = duration_cast<nanoseconds>(t2 - t1).count();
-	cout << "temps string (14 char) :" << temps << endl;
-
-	//Vecteur de 14 doubles
-	vector<double> vd{ 0.1, 1.2, 3.5, 1.8, 0.4, 10.2, -0.4, 5.8, 6.9, 12.5, 24.3, 0.6, 12.2, 4.5 };
-	cout << endl;
-	t1 = high_resolution_clock::now();
-	quickSort(vd.begin(), vd.end());
-	t2 = high_resolution_clock::now();
-	temps = duration_cast<nanoseconds>(t2 - t1).count();
-	cout << "temps vecteur doubles (14 doubles) :" << temps << endl;
-
-	//Tableau de 14 entiers
-	int array[] = { 7, 3, 6, 1, 9, 2, 0, 10, 12, -3, 48, 5, 13, -1 };
-	cout << endl;
-	t1 = high_resolution_clock::now();
-	quickSort(array, array + 10);
-	t2 = high_resolution_clock::now();
-	temps = duration_cast<nanoseconds>(t2 - t1).count();
-	cout << "temps tableau (14 entiers) :" << temps << endl;
+	//Vecteurs de char
+	vector<char> v3;
+	tempsMoyen = calculTriGenerique(v3, 100, 1000);
+	cout << "Temps moyen pour 1000 vecteurs (char) de 100 valeurs : "
+		<< tempsMoyen << endl;
 
 	return 0;
 }

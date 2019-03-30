@@ -1,4 +1,4 @@
-//
+////
 //  select.cpp
 //
 //  Created by Olivier Cuisenaire on 10.04.15.
@@ -12,6 +12,7 @@
 #include <string>
 #include <chrono>
 #include<ctime>
+#include <limits>
 
 using namespace std;
 using namespace std::chrono;
@@ -76,7 +77,7 @@ void selectionSort(RandomAccessIterator begin,
 }
 
 
-void calculTri(int tailleVecteur, int nbVecteurs)
+void calculTri(const int tailleVecteur, const int nbVecteurs)
 {
 	double tempsMoyen = 0.;
 	double tempsTotal = 0.;
@@ -95,9 +96,32 @@ void calculTri(int tailleVecteur, int nbVecteurs)
 		tempsTotal += duration_cast<nanoseconds>(t2 - t1).count();
 		v.clear();
 	}
-	tempsMoyen = tempsTotal / 100;
+	tempsMoyen = tempsTotal / nbVecteurs;
 	cout << "Temps moyen pour " << nbVecteurs << " vecteurs (int) de " <<
 		tailleVecteur << " valeurs : " << tempsMoyen << endl;
+}
+
+template < typename T >
+int calculTriGenerique(vector<T>& v, const int tailleVecteur, const int nbVecteurs)
+{
+	double tempsMoyen = 0.;
+	double tempsTotal = 0.;
+	high_resolution_clock::time_point t1;
+	high_resolution_clock::time_point t2;
+	for (int i = 0; i < nbVecteurs; ++i)
+	{
+		for (int j = 0; j < tailleVecteur; ++j)
+		{
+			v.push_back(rand() % numeric_limits<int>::max() + 1);
+		}
+		t1 = high_resolution_clock::now();
+		selectionSort(v.begin(), v.end());
+		t2 = high_resolution_clock::now();
+		tempsTotal += duration_cast<nanoseconds>(t2 - t1).count();
+		v.clear();
+	}
+	tempsMoyen = tempsTotal / nbVecteurs;
+	return tempsMoyen;
 }
 
 // main
@@ -113,9 +137,28 @@ int main(int argc, const char * argv[]) {
 	//tri rapide
 	 //Calcul du temps de tri pour des séries de données de taille différente de même distribution
 
-	calculTri(100, 100);
-	calculTri(100, 1000);
-	calculTri(100, 10000);
+	//calculTri(100, 1000);
+	//calculTri(1000, 1000);
+	//calculTri(10000, 1000);
+
+
+	//Vecteurs d'entiers
+	vector<int> v1;
+	int tempsMoyen = calculTriGenerique(v1, 100, 1000);
+	cout << "Temps moyen pour 1000 vecteurs (int) de 100 valeurs : "
+		<< tempsMoyen << endl;
+
+	//Vecteurs de doubles
+	vector<short> v2;
+	tempsMoyen = calculTriGenerique(v2, 100, 1000);
+	cout << "Temps moyen pour 1000 vecteurs (double) de 100 valeurs : "
+		<< tempsMoyen << endl;
+
+	//Vecteurs de char
+	vector<char> v3;
+	tempsMoyen = calculTriGenerique(v3, 100, 1000);
+	cout << "Temps moyen pour 1000 vecteurs (char) de 100 valeurs : "
+		<< tempsMoyen << endl;
 
 	return 0;
 
