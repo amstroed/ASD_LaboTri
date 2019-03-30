@@ -122,6 +122,30 @@ void quickSort(RandomAccessIterator begin,
 }
 
 
+void calculTri(int tailleVecteur, int nbVecteurs)
+{
+	double tempsMoyen = 0.;
+	double tempsTotal = 0.;
+	high_resolution_clock::time_point t1;
+	high_resolution_clock::time_point t2;
+	vector<int> v;
+	for (int i = 0; i < nbVecteurs; ++i)
+	{
+		for (int j = 0; j < tailleVecteur; ++j)
+		{
+			v.push_back(rand() % (1001) + 0);
+		}
+		t1 = high_resolution_clock::now();
+		quickSort(v.begin(), v.end());
+		t2 = high_resolution_clock::now();
+		tempsTotal += duration_cast<nanoseconds>(t2 - t1).count();
+		v.clear();
+	}
+	tempsMoyen = tempsTotal / 100;
+	cout << "Temps moyen pour " << nbVecteurs << " vecteurs (int) de " <<
+		tailleVecteur << " valeurs : " << tempsMoyen << endl;
+}
+
 // main
 //
 // Programme testant la mise en oeuvre de quickSort
