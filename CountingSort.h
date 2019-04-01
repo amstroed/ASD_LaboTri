@@ -87,10 +87,13 @@ namespace asd1 {
    {
       std::vector<unsigned int> t(v.size());
       //Découper en 4 bytes de 8bits : int 32bits -> 0b[byte3][byte2][byte1][byte0]
-      CountingSort(v.begin(), v.end(), t.begin(), [](unsigned int x){return (x & 0xff000000)>>24;}, 255);//byte3
-      CountingSort(t.begin(), t.end(), v.begin(), [](unsigned int x){return (x & 0x00ff0000)>>16;}, 255);//byte2
-      CountingSort(v.begin(), v.end(), t.begin(), [](unsigned int x){return (x & 0x0000ff00)>>8 ;}, 255);//byte1
-      CountingSort(t.begin(), t.end(), v.begin(), [](unsigned int x){return (x & 0x000000ff)    ;}, 255);//byte0
+      CountingSort(v.begin(), v.end(), t.begin(), [](unsigned int x){return (x & 0x000000ff)    ;}, 255);//byte0
+      CountingSort(t.begin(), t.end(), v.begin(), [](unsigned int x){return (x & 0x0000ff00)>>8 ;}, 255);//byte1
+      CountingSort(v.begin(), v.end(), t.begin(), [](unsigned int x){return (x & 0x00ff0000)>>16;}, 255);//byte2
+      CountingSort(t.begin(), t.end(), v.begin(), [](unsigned int x){return (x & 0xff000000)>>24;}, 255);//byte3
+
+
+
    }
 }
 
