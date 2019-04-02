@@ -35,7 +35,8 @@ namespace asd1 {
    {
       //Recherche de la valeur key maximale
       //La key la plus grande est gardée comme max_key
-      if(max_key == (-1)){
+
+      if(max_key == (size_t)(-1)){
          max_key = key(*first);
          for(RandomAccessIterator i = first; i != last; i++){
             if(key(*i) > max_key){
@@ -46,31 +47,22 @@ namespace asd1 {
 
       std::vector<unsigned> cpt(max_key + 1);
 
-      //Comptage
+      //Comptage des éléments de chaque type
       for(RandomAccessIterator i = first; i != last; i++){
-         ++cpt.at(key(*i));
+         ++cpt[key(*i)];
       }
 
-      //Tri
-      for(size_t i = 0; i < cpt.size(); ++i){
-         unsigned nbATrier = cpt.at(i);
-         unsigned trie     = 0;
-         for(RandomAccessIterator j = first; j != last; j++){
-            //Si la valeur est de type i alors il faut la mettre dans le container output
-            //La position d'écriture dans l'output doit augmenter de 1 et
-            //Le nb de valeurs de type i triée augmente également de 1
-            if(key(*j) == i){
-               *output = *j;
-               ++output;
-               ++trie;
+      //Parce que l'on connait le nombre d'élément de chaque type,
+      //on peut connaître la position du dernier élément de chaque
+      //type dans le tableau output
+      for(size_t j = 1; j < cpt.size(); ++j){
+         cpt[j] += cpt[j - 1];
+      }
 
-               //Si nbATrier valeurs de type i sont triées,
-               //passer au prochain type
-               if(trie == nbATrier){
-                  break;
-               }
-            }
-         }
+
+      for(RandomAccessIterator k = last - 1; k != first - 1; --k) {
+         output[cpt[key(*k)] - 1] = *k;
+         --cpt[key(*k)];
       }
    }
 
@@ -86,14 +78,24 @@ namespace asd1 {
    void RadixSort(std::vector<unsigned int>& v)
    {
       std::vector<unsigned int> t(v.size());
+
       //Découper en 4 bytes de 8bits : int 32bits -> 0b[byte3][byte2][byte1][byte0]
-      CountingSort(v.begin(), v.end(), t.begin(), [](unsigned int x){return (x & 0x000000ff)    ;}, 255);//byte0
-      CountingSort(t.begin(), t.end(), v.begin(), [](unsigned int x){return (x & 0x0000ff00)>>8 ;}, 255);//byte1
-      CountingSort(v.begin(), v.end(), t.begin(), [](unsigned int x){return (x & 0x00ff0000)>>16;}, 255);//byte2
-      CountingSort(t.begin(), t.end(), v.begin(), [](unsigned int x){return (x & 0xff000000)>>24;}, 255);//byte3
+      //Les tris se font dans l'ordre suivant :
+      // 1. par byte0
+      // 2. par byte1
+      // 3. par byte2
+      // 4. par byte3
 
-
-
+      //(x >>(8*posByte))& 0xff) permet d'isoler le "posByte"ème byte.
+      //Les 32 bits sont shifter à droite de 8*posByte vers la droite
+      //Ainsi les 8 bits qui nous intéressent sont dans le byte de poids faible
+      //Pour les bytes 0 à 2, après leur shift logique, les bits de poids fort après
+      //le bit 7, ne sont pas forcément à 0 donc, il faut appliquer la fonction
+      //logique AND avec 0xff afin de mettre à 0 ces bits là.
+      for(size_t posByte = 0; posByte < 4; ++posByte){
+         CountingSort(v.begin(), v.end(), t.begin(), [&](unsigned int x){return (x >> (8 * posByte)) & 0xff;}, 255);
+         v = t;
+      }
    }
 }
 
