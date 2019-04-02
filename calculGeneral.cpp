@@ -162,17 +162,6 @@ double calculTriComptage(vector<unsigned> v)
 	return duration_cast<milliseconds>(t2 - t1).count();
 }
 
-template < typename T >
-double calculTriComptageGenerique(const vector<T> v)
-{
-	double temps = 0.;
-	high_resolution_clock::time_point t1 = high_resolution_clock::now();
-
-	high_resolution_clock::time_point t2 = high_resolution_clock::now();
-	return duration_cast<milliseconds>(t2 - t1).count();
-}
-
-
 double calculTriRapide(vector<unsigned> v)
 {
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
@@ -181,26 +170,7 @@ double calculTriRapide(vector<unsigned> v)
 	return duration_cast<milliseconds>(t2 - t1).count();
 }
 
-template < typename T >
-double calculTriRapideGenerique(const vector<T> v)
-{
-	double temps = 0.;
-	high_resolution_clock::time_point t1 = high_resolution_clock::now();
-	quickSort(v.begin(), v.end());
-	high_resolution_clock::time_point t2 = high_resolution_clock::now();
-	return duration_cast<milliseconds>(t2 - t1).count();
-}
-
 double calculTriSelection(vector<unsigned> v)
-{
-	high_resolution_clock::time_point t1 = high_resolution_clock::now();
-	selectionSort(v.begin(), v.end());
-	high_resolution_clock::time_point t2 = high_resolution_clock::now();
-	return duration_cast<milliseconds>(t2 - t1).count();
-}
-
-template < typename T >
-int calculTriSelectionGenerique(const vector<T> v)
 {
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	selectionSort(v.begin(), v.end());
